@@ -17,11 +17,19 @@ struct ContentView: View {
         videos: ["small", "immure"]
     )
     
+    
     @State private var selectedArtPiece: ArtPiece? = nil
     @State private var showMapModal = false
     @State private var isAnimating = false // Control both animations with a single state
     
     @Environment(\.colorScheme) var colorScheme
+    
+    @StateObject private var userManager = UserManager() // Observable instance of UserManager
+       @State private var email = ""
+       @State private var password = ""
+       @State private var name = ""
+//       @State private var avatarUrl = ""
+       @State private var preferences: [String] = []
 
 
     var body: some View {
@@ -54,6 +62,46 @@ struct ContentView: View {
                             isAnimating = true // Trigger the animation slightly after the view appears
                         }
                     }
+                    
+                    VStack {
+                                if userManager.isLoggedIn {
+                                    Text("Welcome, \(userManager.currentUser?.email ?? "User")!")
+                                    // Additional logged-in UI components here
+                                } else {
+                                    // Signup UI
+                                    TextField("Email", text: $email)
+                                        .autocapitalization(.none)
+                                        .padding()
+                                        .background(Color.gray.opacity(0.1))
+                                        .cornerRadius(5)
+
+                                    SecureField("Password", text: $password)
+                                        .padding()
+                                        .background(Color.gray.opacity(0.1))
+                                        .cornerRadius(5)
+
+                                    TextField("Name", text: $name)
+                                        .padding()
+                                        .background(Color.gray.opacity(0.1))
+                                        .cornerRadius(5)
+
+//                                    TextField("Avatar URL", text: $avatarUrl)
+//                                        .autocapitalization(.none)
+//                                        .padding()
+//                                        .background(Color.gray.opacity(0.1))
+//                                        .cornerRadius(5)
+
+                                    Button("Sign Up") {
+                                        userManager.signUp(email: email, password: password, name: name, preferences: preferences)
+                                    }
+                                    .padding()
+                                    .background(Color.blue)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(5)
+                                }
+                            }
+                            .padding()
+                        }
                     
                     // Current Exhibitions Section
                     VStack(alignment: .center, spacing: 16) {
@@ -122,6 +170,8 @@ struct ContentView: View {
                     }
                     .padding(.horizontal)
                     .foregroundColor(.primary)
+                    
+                    
                     
                     // Featured Artist Section
                     Text("Local Artist Spotlight")
@@ -252,7 +302,7 @@ struct ContentView: View {
             .navigationBarHidden(true)
         }
     }
-}
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
