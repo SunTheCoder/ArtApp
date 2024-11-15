@@ -50,10 +50,12 @@ struct ChatView: View {
                     }) {
                         Text("Send")
                             .bold()
-                            .padding(.horizontal)
-                            .background(Color.blue)
+                            .padding(2)
+                            .padding(.horizontal, 2)
+                            .background(Color.primary.opacity(0.2))
                             .foregroundColor(.white)
-                            .cornerRadius(8)
+                            .cornerRadius(3)
+                            .shadow(radius: 2)
                     }
                     .disabled(newMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }

@@ -145,10 +145,13 @@ struct CurrentExhibitionsView: View {
 
                             Link("Survey Link", destination: URL(string: exhibition.surveyUrl)!)
                                 .font(.caption)
-                                .padding(4)
-                                .foregroundColor(.blue)
-                                .background(Color.teal.opacity(0.1))
+                                .padding(2)
+                                .padding(.horizontal, 2)
+                                .background(Color.primary.opacity(0.2))
+                                .foregroundColor(.white)
+//                                .background(Color.teal.opacity(0.1))
                                 .cornerRadius(4)
+                                .shadow(radius: 3)
                                 .accessibilityLabel("Open Survey Link")
                         }
                     }
@@ -334,10 +337,12 @@ struct UserAuthenticationView: View {
                 Button("Log Out") {
                     userManager.logOut()
                 }
-                .padding()
-                .background(Color.red)
+                .padding(2)
+                .padding(.horizontal, 2)
+                .background(Color.primary.opacity(0.2))
                 .foregroundColor(.white)
                 .cornerRadius(3)
+                shadow(radius: 2)
             } else {
                 TextField("Email", text: $email)
                     .autocapitalization(.none)
@@ -359,7 +364,8 @@ struct UserAuthenticationView: View {
                     Button("Log In") {
                         userManager.logIn(email: email, password: password)
                     }
-                    .padding()
+                    .padding(2)
+                    .padding(.horizontal, 2)
                     .background(Color.primary.opacity(0.2))
                     .foregroundColor(.white)
                     .cornerRadius(3)
@@ -368,7 +374,8 @@ struct UserAuthenticationView: View {
                     Button("Sign Up") {
                         userManager.signUp(email: email, password: password, name: name, preferences: preferences)
                     }
-                    .padding()
+                    .padding(2)
+                    .padding(.horizontal, 2)
                     .background(Color.primary.opacity(0.2))
                     .foregroundColor(.white)
                     .cornerRadius(3)
