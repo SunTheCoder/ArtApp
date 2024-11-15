@@ -6,17 +6,31 @@ struct ChatView: View {
     let artPieceID: Int
     @State private var newMessage = ""
     @State private var messages = [Message]()
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .short
+        return formatter
+    }()
 
     var body: some View {
         VStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
                     ForEach(messages) { message in
-                        Text(message.text)
-                            .padding(4)
-                            .background(Color.gray.opacity(0.1))
-                            .cornerRadius(3)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(message.text)
+                                .padding(4)
+                                .background(Color.gray.opacity(0.1))
+                                .cornerRadius(3)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            // Display formatted timestamp
+                            Text(dateFormatter.string(from: message.timestamp.dateValue()))
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                                .padding(.leading, 8)
+                        }
                     }
                 }
             }
@@ -33,7 +47,7 @@ struct ChatView: View {
             }
             .padding(2)
         }
-        .onAppear(perform: loadMessages) // Set up listener once on appear
+        .onAppear(perform: loadMessages)
     }
     
     func sendMessage() {
