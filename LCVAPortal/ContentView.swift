@@ -9,30 +9,60 @@ struct ContentView: View {
         imageUrls: ["Black Front", "M1", "Poison I", "Poison II"],
         videos: ["small", "immure"]
     )
-
+    
     @State private var selectedArtPiece: ArtPiece? = nil
     @State private var isAnimating = false
     @StateObject private var userManager = UserManager()
     
     @Environment(\.colorScheme) var colorScheme
-
+    
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack {
-                    HeaderView(isAnimating: $isAnimating)
+//                    HeaderView(isAnimating: $isAnimating)
                     CurrentExhibitionsView(exhibitions: exhibitions, colorScheme: colorScheme)
                     FeaturedArtistView(sampleArtist: sampleArtist, colorScheme: colorScheme)
                     FeaturedArtOnCampusView(selectedArtPiece: $selectedArtPiece)
                     UserAuthenticationView(userManager: userManager)
                 }
-//                .navigationTitle("Exhibitions")
-                .navigationBarHidden(true)
-                .ignoresSafeArea(edges: .top)
+                .navigationBarTitleDisplayMode(.inline) // Keeps the title inline
+                .toolbar {
+                    ToolbarItem(placement: .principal) { // Centers the content in the navigation bar
+                        VStack(spacing: -10) { // Adds spacing between the texts
+                            Text("LONGWOOD")
+                                .font(.system(size: 35, weight: .bold, design: .serif))
+                                .tracking(5)
+                                .offset(y: isAnimating ? 50 : -10)
+                                .opacity(isAnimating ? 1 : 0)
+                                .animation(.easeOut(duration: 1), value: isAnimating)
+                            
+                            Text("CENTER for the VISUAL ARTS")
+                                .font(.system(size: 25, weight: .regular, design: .serif))
+                                .italic()
+                                .offset(y: isAnimating ? 50 : -10)
+                                .opacity(isAnimating ? 1 : 0)
+                                .animation(.easeOut(duration: 1).delay(0.2), value: isAnimating)
+                        }
+                        .frame(maxWidth: .infinity) // Ensures full width
+                        .padding(.vertical, -30) // Adds vertical padding to increase space
+                        .offset(y: -20)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(Color.primary)
+                        .onAppear {
+                            isAnimating = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                isAnimating = true
+                            }
+                        }
+                    }
+                }
+                
             }
         }
     }
 }
+
 
 // MARK: - Header View
 struct HeaderView: View {
