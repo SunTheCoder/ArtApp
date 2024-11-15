@@ -36,6 +36,7 @@ struct ContentView: View {
                                 .offset(y: isAnimating ? 50 : -10)
                                 .opacity(isAnimating ? 1 : 0)
                                 .animation(.easeOut(duration: 1), value: isAnimating)
+                                .padding(.bottom, 10)
                             
                             Text("CENTER for the VISUAL ARTS")
                                 .font(.system(size: 25, weight: .regular, design: .serif))
@@ -332,7 +333,7 @@ struct UserAuthenticationView: View {
     var body: some View {
         VStack {
             if userManager.isLoggedIn {
-                Text("Welcome, \(userManager.currentUser?.email ?? "User")!")
+                Text("Welcome, \(userManager.currentUser?.displayName ?? "User")!")
                 
                 Button("Log Out") {
                     userManager.logOut()
@@ -342,7 +343,7 @@ struct UserAuthenticationView: View {
                 .background(Color.primary.opacity(0.2))
                 .foregroundColor(.white)
                 .cornerRadius(3)
-                shadow(radius: 2)
+                .shadow(radius: 2)
             } else {
                 TextField("Email", text: $email)
                     .autocapitalization(.none)
@@ -384,6 +385,7 @@ struct UserAuthenticationView: View {
             }
         }
         .padding()
+        .frame(maxWidth: 400)
     }
 }
 
