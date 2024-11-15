@@ -63,64 +63,7 @@ struct ContentView: View {
                         }
                     }
                     
-                    VStack {
-                                if userManager.isLoggedIn {
-                                        Text("Welcome, \(userManager.currentUser?.email ?? "User")!")
-                                        
-                                        
-                                        // Log Out Button
-                                        Button("Log Out") {
-                                            userManager.logOut()
-                                        }
-                                        .padding()
-                                        .background(Color.red)
-                                        .foregroundColor(.white)
-                                        .cornerRadius(5)
-                                } else {
-                                    // Signup UI
-                                    TextField("Email", text: $email)
-                                        .autocapitalization(.none)
-                                        .padding()
-                                        .background(Color.gray.opacity(0.1))
-                                        .cornerRadius(5)
-
-                                    SecureField("Password", text: $password)
-                                        .padding()
-                                        .background(Color.gray.opacity(0.1))
-                                        .cornerRadius(5)
-
-                                    TextField("Name", text: $name)
-                                        .padding()
-                                        .background(Color.gray.opacity(0.1))
-                                        .cornerRadius(5)
-
-//                                    TextField("Avatar URL", text: $avatarUrl)
-//                                        .autocapitalization(.none)
-//                                        .padding()
-//                                        .background(Color.gray.opacity(0.1))
-//                                        .cornerRadius(5)
-                                    HStack {
-                                        Button("Log In") {
-                                            userManager.logIn(email: email, password: password)
-                                        }
-                                        .padding()
-                                        .background(Color.blue)
-                                        .foregroundColor(.white)
-                                        .cornerRadius(5)
-
-                                        Button("Sign Up") {
-                                            userManager.signUp(email: email, password: password, name: name, preferences: preferences)
-                                        }
-                                        .padding()
-                                        .background(Color.blue)
-                                        .foregroundColor(.white)
-                                        .cornerRadius(5)
-                                        
-                                    }
-                                    
-                                }
-                            }
-                            .padding()
+                    
                         }
                     
                     // Current Exhibitions Section
@@ -292,12 +235,8 @@ struct ContentView: View {
                                             .frame(maxWidth: 200)
                                     }
                                     .padding()
-                                    
-                                    
-                                    
-                                    
                                 }
-                                
+
                             }
                             .padding(.horizontal)
                             
@@ -315,11 +254,74 @@ struct ContentView: View {
                             }
                         }
                     }
+                
+                VStack {
+                            if userManager.isLoggedIn {
+                                    Text("Welcome, \(userManager.currentUser?.email ?? "User")!")
+                                    
+                                    
+                                    // Log Out Button
+                                    Button("Log Out") {
+                                        userManager.logOut()
+                                    }
+                                    .padding()
+                                    .background(Color.red)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(3)
+                            } else {
+                                // Signup UI
+                                TextField("Email", text: $email)
+                                    .autocapitalization(.none)
+                                    .padding()
+                                    .background(Color.gray.opacity(0.1))
+                                    .cornerRadius(3)
+
+                                SecureField("Password", text: $password)
+                                    .padding()
+                                    .background(Color.gray.opacity(0.1))
+                                    .cornerRadius(3)
+
+                                TextField("Name", text: $name)
+                                    .padding()
+                                    .background(Color.gray.opacity(0.1))
+                                    .cornerRadius(3)
+
+//                                    TextField("Avatar URL", text: $avatarUrl)
+//                                        .autocapitalization(.none)
+//                                        .padding()
+//                                        .background(Color.gray.opacity(0.1))
+//                                        .cornerRadius(5)
+                                HStack {
+                                    Button("Log In") {
+                                        userManager.logIn(email: email, password: password)
+                                    }
+                                    .padding(3)
+                                    .padding(.horizontal, 2)
+                                    .background(Color.primary.opacity(0.2))
+                                    .foregroundColor(.white)
+                                    .cornerRadius(3)
+                                    .shadow(radius: 2)
+
+                                    Button("Sign Up") {
+                                        userManager.signUp(email: email, password: password, name: name, preferences: preferences)
+                                    }
+                                    .padding(3)
+                                    .padding(.horizontal, 2)
+                                    .background(Color.primary.opacity(0.2))
+                                    .foregroundColor(.white)
+                                    .cornerRadius(3)
+                                    .shadow(radius: 2)
+                                }
+                                
+                            }
+                        }
+                        .padding()
                     
                 }
 //                .padding(.vertical)
             }
             .navigationBarHidden(true)
+        
         }
     }
 
