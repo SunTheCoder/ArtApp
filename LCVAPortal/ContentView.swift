@@ -10,6 +10,8 @@ struct ContentView: View {
         videos: ["small", "immure"]
     )
     
+    @State private var isArtistDetailPresented = false
+
     @State private var selectedArtPiece: ArtPiece? = nil
     @State private var isAnimating = false
     @StateObject private var userManager = UserManager()
@@ -174,17 +176,18 @@ struct CurrentExhibitionsView: View {
 struct FeaturedArtistView: View {
     let sampleArtist: Artist
     let colorScheme: ColorScheme
-
+    
+    @State private var isArtistDetailPresented = false // State to control modal presentation
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             TitleView()
         }
         VStack(alignment: .center, spacing: 16) {
-            
             ArtistInfoView(name: sampleArtist.name)
             MainImageView()
             ImageGalleryView(imageUrls: sampleArtist.imageUrls)
-            LearnMoreLinkView(sampleArtist: sampleArtist)
+            LearnMoreButton(sampleArtist: sampleArtist, isArtistDetailPresented: $isArtistDetailPresented)
         }
         .padding(.horizontal)
         .background(
@@ -193,6 +196,10 @@ struct FeaturedArtistView: View {
                 .shadow(radius: 3)
         )
         .frame(maxWidth: 360)
+        // Present the modal view
+        .sheet(isPresented: $isArtistDetailPresented) {
+            ArtistDetailModalView(artist: sampleArtist, isPresented: $isArtistDetailPresented)
+        }
     }
 
     private struct TitleView: View {
@@ -246,15 +253,18 @@ struct FeaturedArtistView: View {
         }
     }
 
-    private struct LearnMoreLinkView: View {
+    private struct LearnMoreButton: View {
         let sampleArtist: Artist
+        @Binding var isArtistDetailPresented: Bool // Binding to control modal state
+        
         var body: some View {
-            NavigationLink(destination: ArtistDetailView(artist: sampleArtist)) {
+            Button(action: {
+                isArtistDetailPresented = true
+            }) {
                 Text("Click here to learn more about \(sampleArtist.name.split(separator: " ").first.map(String.init) ?? sampleArtist.name)'s practice.")
                     .font(.system(size: 14))
                     .foregroundColor(.blue)
                     .padding(.vertical)
-
             }
         }
     }
