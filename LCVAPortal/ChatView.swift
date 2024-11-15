@@ -38,9 +38,10 @@ struct ChatView: View {
                     }
                 }
                 .padding(2)
-                .onChange(of: messages) { _ in
+                .onChange(of: messages) { oldMessages, newMessages in
                     scrollToBottom(proxy: scrollViewProxy)
                 }
+
 
                 HStack {
                     TextField("Enter message...", text: $newMessage)
@@ -91,9 +92,13 @@ struct ChatView: View {
                 } else {
                     print("Message sent")
                     newMessage = ""
+                    
+                    // Dismiss the keyboard
+                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                 }
             }
     }
+
 
     func loadMessages() {
         Firestore.firestore()
@@ -119,7 +124,7 @@ struct ChatView: View {
     }
 
     func filterMessage(_ message: String) -> String {
-        let bannedWords = ["badword1", "badword2"]
+        let bannedWords = ["nigger", "nigga", "fuck", "shit", "bitch", "ho", "whore", "dick", "pussy", "wetback", "hoe", "dumbass", "dumbazz", "faggot", "gay", "ghey", "betch", "spick", "retard", "retarded", "cracker", "cracka", ]
         var filteredMessage = message
         for word in bannedWords {
             filteredMessage = filteredMessage.replacingOccurrences(of: word, with: "****")

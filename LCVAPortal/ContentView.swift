@@ -19,6 +19,7 @@ struct ContentView: View {
     
     @State private var selectedArtPiece: ArtPiece? = nil
     @State private var showMapModal = false
+    @State private var isAnimating = false // Control both animations with a single state
     
     @Environment(\.colorScheme) var colorScheme
 
@@ -26,20 +27,33 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 16) {
+                VStack() {
                     // Main title at the top
                     VStack {
                         Text("LONGWOOD")
                             .font(.system(size: 35, weight: .bold, design: .serif))
                             .tracking(5) // Adds spacing between letters for a formal look
+                            .offset(y: isAnimating ? 0 : -100) // Start off-screen
+                                            .opacity(isAnimating ? 1 : 0) // Fade in with the drop-down
+                                            .animation(.easeOut(duration: 1), value: isAnimating)
 
                         Text("CENTER for the VISUAL ARTS")
                             .font(.system(size: 25, weight: .regular, design: .serif))
                             .italic() // Italics for 'for the' to create emphasis
+                            .offset(y: isAnimating ? 0 : -100)
+                                           .opacity(isAnimating ? 1 : 0)
+                                           .animation(.easeOut(duration: 1).delay(0.2), value: isAnimating)
                     }
                     .multilineTextAlignment(.center)
                     .foregroundColor(Color.primary)
-                    .padding()
+                    .padding(.top, 0)
+                    .padding(.bottom, 20)
+                    .onAppear {
+                        isAnimating = false // Reset before starting
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            isAnimating = true // Trigger the animation slightly after the view appears
+                        }
+                    }
                     
                     // Current Exhibitions Section
                     VStack(alignment: .center, spacing: 16) {
@@ -66,11 +80,15 @@ struct ContentView: View {
                                     VStack(alignment: .center, spacing: 4) {
                                         Text(exhibition.title)
                                             .font(.headline)
+                                            .padding(.bottom, 4)
+                                            
                                         // Dynamically display "Artist:" or "Artists:" based on the count
                                         Text((exhibition.artist.count > 1 ? "Artists:" : "Artist:"))
-                                            .font(.subheadline)
-                                        Text((exhibition.artist.joined(separator: ", ")))
                                             .font(.system(size: 13, weight: .semibold))
+                                        
+                                            
+                                        Text((exhibition.artist.joined(separator: ", ")))
+                                            .font(.subheadline)
                                             .padding(1)
                                             .bold()
                                             .italic()
@@ -111,7 +129,7 @@ struct ContentView: View {
                         .italic() // Italics for 'for the' to create emphasis
                         .foregroundColor(.secondary)
                         .padding(.top, 25)
-                        .padding(.bottom, 8)
+                        .padding(.bottom, 16)
                     VStack(alignment: .center, spacing: 16) {
                        
                         
@@ -229,7 +247,7 @@ struct ContentView: View {
                     }
                     
                 }
-                .padding(.vertical)
+//                .padding(.vertical)
             }
             .navigationBarHidden(true)
         }
