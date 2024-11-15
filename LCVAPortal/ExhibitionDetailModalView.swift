@@ -24,6 +24,8 @@ struct ExhibitionDetailModalView: View {
                         image
                             .resizable()
                             .scaledToFit()
+                            .clipShape(RoundedRectangle(cornerRadius: 3))
+                            .shadow(radius: 3)
                             .accessibilityLabel(Text("Image of \(exhibition.title)"))
                     } placeholder: {
                         ProgressView()
@@ -33,48 +35,71 @@ struct ExhibitionDetailModalView: View {
                     
                     // Display title
                     Text(exhibition.title)
-                        .font(.largeTitle)
+                        .font(.system(size: 25))
                         .bold()
                         .padding(.vertical)
                         .accessibilityAddTraits(.isHeader)
                         .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity, alignment: .center)
                     
                     // Reception, Closing, Description, and Links
                     Text("Reception:\n\(exhibition.reception)")
                         .font(.body)
                         .padding(.vertical)
                         .accessibilityLabel(Text("Reception: \(exhibition.reception)"))
+
                     
                     Text("Closing:\n\(exhibition.closing)")
                         .font(.body)
                         .padding(.vertical)
                         .accessibilityLabel(Text("Closing: \(exhibition.closing)"))
+
                     
-                    Link("Survey Link", destination: URL(string: exhibition.surveyUrl)!)
-                        .font(.subheadline)
-                        .foregroundColor(.blue)
-                        .accessibilityLabel("Open Survey Link")
+                    
+
                     
                     Text(exhibition.description)
                         .font(.body)
                         .padding(.vertical)
                         .accessibilityLabel(Text("Description: \(exhibition.description)"))
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    
+                    Link("Survey Link", destination: URL(string: exhibition.surveyUrl)!)
+                        .font(.subheadline)
+                        .padding(2)
+                        .padding(.horizontal, 2)
+                        .background(Color.primary.opacity(0.2))
+                        .foregroundColor(.white)
+                        .cornerRadius(3)
+                        .shadow(radius: 2)
+                        .accessibilityLabel("Open Survey Link")
+                        .frame(maxWidth: .infinity, alignment: .center)
+
                     
                     // Extra Content Section
                     Text("Extra Content:")
                         .font(.headline)
-                        .padding(.top)
+                        
+                        .frame(maxWidth: .infinity, alignment: .center)
+
                     
                     if let extraLink = exhibition.extraLink, !extraLink.isEmpty, let url = URL(string: extraLink) {
                         Link(extraLink, destination: url)
-                            .font(.caption)
-                            .foregroundColor(.blue)
-                            .underline()
+                            .font(.subheadline)
+                            .padding(2)
+                            .padding(.horizontal, 2)
+                            .background(Color.primary.opacity(0.2))
+                            .foregroundColor(.white)
+                            .cornerRadius(3)
+                            .shadow(radius: 2)
                             .accessibilityLabel(Text("Visit \(extraLink)"))
+                            .frame(maxWidth: .infinity, alignment: .center)
+
                     } else {
                         Text("No additional link available")
                             .font(.caption)
                             .foregroundColor(.gray)
+                        
                     }
                 }
                 .padding()
