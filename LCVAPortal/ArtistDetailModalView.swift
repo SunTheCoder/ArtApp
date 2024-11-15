@@ -46,7 +46,7 @@ struct ArtistDetailModalView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Featured Artist")
+            .navigationTitle("Local Artist Spotlight")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

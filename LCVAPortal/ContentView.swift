@@ -158,10 +158,12 @@ struct CurrentExhibitionsView: View {
                             
                             Link("Survey Link", destination: URL(string: exhibition.surveyUrl)!)
                                 .font(.caption)
-                                .foregroundColor(.blue)
-                                .padding(.horizontal, 4)
+                                .padding(2)
+                                .padding(.horizontal, 2)
                                 .background(Color.primary.opacity(0.2))
-                                .cornerRadius(4)
+                                .foregroundColor(.white)
+                                .cornerRadius(3)
+                                .shadow(radius: 2)
                         }
                     }
                     .padding()
