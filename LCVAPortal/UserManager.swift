@@ -30,31 +30,42 @@ class UserManager: ObservableObject {
             }
         }
 
-        func signUp(email: String, password: String, name: String, preferences: [String]) {
-            Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
-                if let error = error {
-                    print("Error signing up: \(error.localizedDescription)")
-                } else if let user = authResult?.user {
-                    // Prepare user profile data
-                    let userProfile = [
-                        "name": name,
-                        "email": email,
-//                        "avatarUrl": avatarUrl,
-                        "preferences": preferences,
-                        "role": "user"
-                    ] as [String: Any]
+    func signUp(email: String, password: String, name: String, preferences: [String]) {
+        Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+            if let error = error {
+                print("Error signing up: \(error.localizedDescription)")
+            } else if let user = authResult?.user {
+                // Update the display name for the Firebase user
+                let changeRequest = user.createProfileChangeRequest()
+                changeRequest.displayName = name
+                changeRequest.commitChanges { error in
+                    if let error = error {
+                        print("Error setting display name: \(error.localizedDescription)")
+                    } else {
+                        print("Display name set successfully")
+                    }
+                }
 
-                    // Save profile data to Firestore
-                    self.db.collection("users").document(user.uid).setData(userProfile) { error in
-                        if let error = error {
-                            print("Error saving user profile: \(error.localizedDescription)")
-                        } else {
-                            print("User profile saved successfully!")
-                        }
+                // Prepare user profile data for Firestore
+                let userProfile = [
+                    "name": name,
+                    "email": email,
+                    "preferences": preferences,
+                    "role": "user"
+                ] as [String: Any]
+
+                // Save profile data to Firestore
+                self.db.collection("users").document(user.uid).setData(userProfile) { error in
+                    if let error = error {
+                        print("Error saving user profile: \(error.localizedDescription)")
+                    } else {
+                        print("User profile saved successfully!")
                     }
                 }
             }
         }
+    }
+
 
         func logIn(email: String, password: String) {
             Auth.auth().signIn(withEmail: email, password: password) { authResult, error in

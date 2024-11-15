@@ -3,6 +3,8 @@ import FirebaseFirestore
 
 struct ChatView: View {
     let artPieceID: Int
+    @StateObject var userManager: UserManager // Add userManager as a parameter
+
     @State private var newMessage = ""
     @State private var messages = [Message]()
     @Namespace private var animationNamespace
@@ -79,11 +81,15 @@ struct ChatView: View {
     }
 
     func sendMessage() {
+        guard let currentUser = userManager.currentUser else { return }
+        let username = currentUser.displayName ?? "Anonymous" // Now uses the displayName from Firebase Auth
         let filteredMessage = filterMessage(newMessage)
+        
         let messageData: [String: Any] = [
             "text": filteredMessage,
             "timestamp": Timestamp(),
-            "artPieceID": artPieceID
+            "artPieceID": artPieceID,
+            "username": username
         ]
         
         db.collection("chats")
@@ -101,6 +107,8 @@ struct ChatView: View {
                 }
             }
     }
+
+
 
     func loadMessages() {
         db.collection("chats")

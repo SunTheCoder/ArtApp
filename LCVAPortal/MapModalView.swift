@@ -3,6 +3,8 @@ import MapKit
 
 struct MapModalView: View {
     let artPiece: ArtPiece
+    @ObservedObject var userManager: UserManager // Add userManager parameter
+
     @State private var shouldReloadMap = false
 
     var body: some View {
@@ -27,7 +29,7 @@ struct MapModalView: View {
                 .padding(2)
             
             // ChatView added here
-            ChatView(artPieceID: artPiece.id)
+            ChatView(artPieceID: artPiece.id, userManager: userManager)
                 .frame(maxHeight: 380)
                 .padding(.horizontal)
 

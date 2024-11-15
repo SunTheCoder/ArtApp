@@ -15,6 +15,7 @@ struct Message: Identifiable, Codable, Equatable  {
     var text: String
     var timestamp: Timestamp
     var artPieceID: Int
+    var username: String? // New property to store the username
     
     static func == (lhs: Message, rhs: Message) -> Bool {
             return lhs.id == rhs.id && lhs.text == rhs.text && lhs.timestamp == rhs.timestamp

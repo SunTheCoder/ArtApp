@@ -16,6 +16,12 @@ struct MessageView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
+            
+            // Display the username
+                        Text(message.username ?? "Anonymous")
+                            .font(.subheadline)
+                            .foregroundColor(.blue)
+            
             HStack {
                 Text(message.text)
                     .padding(8)
