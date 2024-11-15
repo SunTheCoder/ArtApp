@@ -135,6 +135,7 @@ struct CurrentExhibitionsView: View {
                                 .scaledToFill()
                                 .frame(width: 120, height: 120)
                                 .clipShape(RoundedRectangle(cornerRadius: 4))
+                                .shadow(radius: 3)
                         } placeholder: {
                             ProgressView()
                         }
