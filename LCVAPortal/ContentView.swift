@@ -103,6 +103,11 @@ struct HeaderView: View {
 struct CurrentExhibitionsView: View {
     let exhibitions: [Exhibition]
     let colorScheme: ColorScheme
+    
+    @State private var proxyExhibition: Exhibition? = nil
+
+    @State private var selectedExhibition: Exhibition? // Track the selected exhibition
+    @State private var isExhibitionDetailPresented = false // State to control modal presentation
 
     var body: some View {
         VStack(alignment: .center, spacing: 16) {
@@ -113,7 +118,16 @@ struct CurrentExhibitionsView: View {
                 .padding(.bottom, 8)
             
             ForEach(exhibitions) { exhibition in
-                NavigationLink(destination: ExhibitionDetailView(exhibition: exhibition)) {
+                Button(action: {
+                    proxyExhibition = exhibition
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        selectedExhibition = proxyExhibition
+                        isExhibitionDetailPresented = true
+                    }
+                }){
+                
+                
+
                     HStack(spacing: 16) {
                         AsyncImage(url: URL(string: exhibition.imageUrl)) { image in
                             image
@@ -129,33 +143,25 @@ struct CurrentExhibitionsView: View {
                             Text(exhibition.title)
                                 .font(.headline)
                                 .padding(.bottom, 4)
-                            Text(exhibition.artist.count > 1 ? "Artists:" : "Artist:")
-                                .font(.system(size: 13, weight: .semibold))
-
+                            
                             Text(exhibition.artist.joined(separator: ", "))
                                 .font(.subheadline)
-                                .padding(1)
-                                .bold()
                                 .italic()
+                            
                             Text("Reception: \(exhibition.reception)")
                                 .font(.caption)
                                 .padding(2)
-                                .bold()
+                            
                             Text("Closing: \(exhibition.closing)")
                                 .font(.caption)
                                 .padding(2)
-                                .bold()
-
+                            
                             Link("Survey Link", destination: URL(string: exhibition.surveyUrl)!)
                                 .font(.caption)
-                                .padding(2)
-                                .padding(.horizontal, 2)
+                                .foregroundColor(.blue)
+                                .padding(.horizontal, 4)
                                 .background(Color.primary.opacity(0.2))
-                                .foregroundColor(.white)
-//                                .background(Color.teal.opacity(0.1))
                                 .cornerRadius(4)
-                                .shadow(radius: 3)
-                                .accessibilityLabel("Open Survey Link")
                         }
                     }
                     .padding()
@@ -169,8 +175,38 @@ struct CurrentExhibitionsView: View {
         }
         .padding(.horizontal)
         .foregroundColor(.primary)
+        .sheet(isPresented: Binding(
+            get: { selectedExhibition != nil },
+            set: { newValue in
+                if !newValue { selectedExhibition = nil }
+            }
+        )) {
+            if let exhibition = selectedExhibition {
+                ExhibitionDetailModalView(exhibition: exhibition, isPresented: Binding(
+                    get: { selectedExhibition != nil },
+                    set: { newValue in
+                        if !newValue { selectedExhibition = nil }
+                    }
+                ))
+            }
+        }
+
+
+
     }
-}
+    // MARK: - Helper Function
+      private func showModalWithExhibition(_ exhibition: Exhibition) {
+          selectedExhibition = nil // Clear previous selection to trigger state change
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+              selectedExhibition = exhibition
+              isExhibitionDetailPresented = true
+          }
+      }
+  }
+
+
+
+
 
 // MARK: - Featured Artist View
 struct FeaturedArtistView: View {
