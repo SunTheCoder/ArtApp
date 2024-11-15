@@ -6,6 +6,7 @@ struct ChatView: View {
     @State private var newMessage = ""
     @State private var messages = [Message]()
     @Namespace private var animationNamespace
+    private let db = Firestore.firestore()
 
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -16,39 +17,38 @@ struct ChatView: View {
 
     var body: some View {
         VStack {
-            ScrollViewReader { scrollViewProxy in // Define ScrollViewReader here
+            ScrollViewReader { scrollViewProxy in
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 12) {
                         ForEach(messages) { message in
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(message.text)
-                                    .padding(4)
-                                    .background(Color.gray.opacity(0.1))
-                                    .cornerRadius(3)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                
-                                // Display formatted timestamp
-                                Text(dateFormatter.string(from: message.timestamp.dateValue()))
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                                    .padding(.leading, 8)
-                            }
-                            .id(message.id) // Assign a unique ID to each message for scrolling
+                            MessageView(
+                                message: message,
+                                isAdmin: isAdmin,
+                                dateFormatter: dateFormatter,
+                                deleteAction: {
+                                    if let messageID = message.id {
+                                        deleteMessage(messageID: messageID)
+                                    }
+                                }
+                            )
+                            .id(message.id)
                         }
+
                     }
+                    .padding()
                 }
-                .padding(2)
                 .onChange(of: messages) { oldMessages, newMessages in
                     scrollToBottom(proxy: scrollViewProxy)
                 }
 
-
+                
                 HStack {
                     TextField("Enter message...", text: $newMessage)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding(.horizontal)
+
                     Button(action: {
                         sendMessage()
-                        // Scroll to the bottom after sending a message
                         if let lastMessageID = messages.last?.id {
                             withAnimation {
                                 scrollViewProxy.scrollTo(lastMessageID, anchor: .bottom)
@@ -58,14 +58,18 @@ struct ChatView: View {
                         Text("Send")
                             .bold()
                             .padding(.horizontal)
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
                     }
+                    .disabled(newMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
-                .padding(2)
+                .padding()
             }
         }
         .onAppear(perform: loadMessages)
     }
-    
+
     func scrollToBottom(proxy: ScrollViewProxy) {
         if let lastMessage = messages.last {
             withAnimation {
@@ -79,11 +83,10 @@ struct ChatView: View {
         let messageData: [String: Any] = [
             "text": filteredMessage,
             "timestamp": Timestamp(),
-            "artPieceID": artPieceID // Ensure artPieceID is of type Int
+            "artPieceID": artPieceID
         ]
         
-        Firestore.firestore()
-            .collection("chats")
+        db.collection("chats")
             .document("\(artPieceID)")
             .collection("messages")
             .addDocument(data: messageData) { error in
@@ -99,10 +102,8 @@ struct ChatView: View {
             }
     }
 
-
     func loadMessages() {
-        Firestore.firestore()
-            .collection("chats")
+        db.collection("chats")
             .document("\(artPieceID)")
             .collection("messages")
             .order(by: "timestamp")
@@ -124,11 +125,30 @@ struct ChatView: View {
     }
 
     func filterMessage(_ message: String) -> String {
-        let bannedWords = ["nigger", "nigga", "fuck", "shit", "bitch", "ho", "whore", "dick", "pussy", "wetback", "hoe", "dumbass", "dumbazz", "faggot", "gay", "ghey", "betch", "spick", "retard", "retarded", "cracker", "cracka", ]
+        let bannedWords = ["nigger", "nigga", "fuck", "shit", "bitch", "ho", "whore", "dick", "pussy", "wetback", "hoe", "dumbass", "dumbazz", "faggot", "gay", "ghey", "betch", "spick", "retard", "retarded", "cracker", "cracka"]
         var filteredMessage = message
         for word in bannedWords {
             filteredMessage = filteredMessage.replacingOccurrences(of: word, with: "****")
         }
         return filteredMessage
+    }
+
+    func deleteMessage(messageID: String) {
+        db.collection("chats")
+            .document("\(artPieceID)")
+            .collection("messages")
+            .document(messageID)
+            .delete { error in
+                if let error = error {
+                    print("Error deleting message: \(error.localizedDescription)")
+                } else {
+                    print("Message deleted")
+                }
+            }
+    }
+
+    private var isAdmin: Bool {
+        // Replace with actual admin check logic
+        return true // Temporary value; adjust based on your authentication logic
     }
 }

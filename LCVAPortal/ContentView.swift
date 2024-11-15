@@ -65,8 +65,17 @@ struct ContentView: View {
                     
                     VStack {
                                 if userManager.isLoggedIn {
-                                    Text("Welcome, \(userManager.currentUser?.email ?? "User")!")
-                                    // Additional logged-in UI components here
+                                        Text("Welcome, \(userManager.currentUser?.email ?? "User")!")
+                                        
+                                        
+                                        // Log Out Button
+                                        Button("Log Out") {
+                                            userManager.logOut()
+                                        }
+                                        .padding()
+                                        .background(Color.red)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(5)
                                 } else {
                                     // Signup UI
                                     TextField("Email", text: $email)
@@ -90,14 +99,25 @@ struct ContentView: View {
 //                                        .padding()
 //                                        .background(Color.gray.opacity(0.1))
 //                                        .cornerRadius(5)
+                                    HStack {
+                                        Button("Log In") {
+                                            userManager.logIn(email: email, password: password)
+                                        }
+                                        .padding()
+                                        .background(Color.blue)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(5)
 
-                                    Button("Sign Up") {
-                                        userManager.signUp(email: email, password: password, name: name, preferences: preferences)
+                                        Button("Sign Up") {
+                                            userManager.signUp(email: email, password: password, name: name, preferences: preferences)
+                                        }
+                                        .padding()
+                                        .background(Color.blue)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(5)
+                                        
                                     }
-                                    .padding()
-                                    .background(Color.blue)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(5)
+                                    
                                 }
                             }
                             .padding()

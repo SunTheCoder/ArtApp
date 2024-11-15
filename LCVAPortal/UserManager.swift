@@ -66,6 +66,17 @@ class UserManager: ObservableObject {
             }
         }
     
+    func logOut() {
+        do {
+            try Auth.auth().signOut()
+            isLoggedIn = false
+            currentUser = nil
+        } catch let error {
+            print("Error logging out: \(error.localizedDescription)")
+        }
+    }
+
+    
 
     // MARK: - Chat Message Functions
 
