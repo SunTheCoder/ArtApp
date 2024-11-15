@@ -1,49 +1,45 @@
-//
-//  MessageView.swift
-//  LCVAPortal
-//
-//  Created by Sun English on 11/15/24.
-//
-
 import SwiftUI
 import FirebaseFirestore
 
 struct MessageView: View {
     let message: Message
-    let isAdmin: Bool
+    let isFromCurrentUser: Bool
     let dateFormatter: DateFormatter
     let deleteAction: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            
-            // Display the username
-                        Text(message.username ?? "Anonymous")
-                            .font(.subheadline)
-                            .foregroundColor(.blue)
-            
-            HStack {
+        HStack {
+            if isFromCurrentUser { Spacer() }
+
+            VStack(alignment: isFromCurrentUser ? .trailing : .leading, spacing: 4) {
+                Text(message.username ?? "Anonymous")
+                    .font(.subheadline)
+                    .foregroundColor(.blue)
+
                 Text(message.text)
                     .padding(8)
-                    .background(Color.gray.opacity(0.2))
+                    .background(isFromCurrentUser ? Color.blue.opacity(0.2) : Color.gray.opacity(0.2))
                     .cornerRadius(8)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: 250, alignment: isFromCurrentUser ? .trailing : .leading)
 
-                // Delete button, visible only if user is admin
-                if isAdmin {
-                    Button(action: deleteAction) {
-                        Image(systemName: "trash")
-                            .foregroundColor(.red)
-                            .padding(4)
-                    }
-                }
+                Text(dateFormatter.string(from: message.timestamp.dateValue()))
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    .padding(isFromCurrentUser ? .trailing : .leading, 8)
             }
 
-            // Display formatted timestamp
-            Text(dateFormatter.string(from: message.timestamp.dateValue()))
-                .font(.caption)
-                .foregroundColor(.gray)
-                .padding(.leading, 8)
+            if !isFromCurrentUser { Spacer() }
         }
-    }
-}
+        .padding(isFromCurrentUser ? .leading : .trailing, 50)
+        .frame(maxWidth: .infinity, alignment: isFromCurrentUser ? .trailing : .leading)
+           }
+       }
+
+       extension DateFormatter {
+           static func shortDateTimeFormatter() -> DateFormatter {
+               let formatter = DateFormatter()
+               formatter.dateStyle = .short
+               formatter.timeStyle = .short
+               return formatter
+           }
+       }

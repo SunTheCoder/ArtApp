@@ -3,19 +3,12 @@ import FirebaseFirestore
 
 struct ChatView: View {
     let artPieceID: Int
-    @StateObject var userManager: UserManager // Add userManager as a parameter
+    @StateObject var userManager: UserManager
 
     @State private var newMessage = ""
     @State private var messages = [Message]()
-    @Namespace private var animationNamespace
     private let db = Firestore.firestore()
-
-    private let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .short
-        formatter.timeStyle = .short
-        return formatter
-    }()
+    private let dateFormatter = DateFormatter.shortDateTimeFormatter()
 
     var body: some View {
         VStack {
@@ -25,7 +18,7 @@ struct ChatView: View {
                         ForEach(messages) { message in
                             MessageView(
                                 message: message,
-                                isAdmin: isAdmin,
+                                isFromCurrentUser: message.username == userManager.currentUser?.displayName,
                                 dateFormatter: dateFormatter,
                                 deleteAction: {
                                     if let messageID = message.id {
@@ -35,15 +28,13 @@ struct ChatView: View {
                             )
                             .id(message.id)
                         }
-
                     }
                     .padding()
                 }
-                .onChange(of: messages) { oldMessages, newMessages in
+                .onChange(of: messages) { _, _ in
                     scrollToBottom(proxy: scrollViewProxy)
                 }
 
-                
                 HStack {
                     TextField("Enter message...", text: $newMessage)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -82,16 +73,16 @@ struct ChatView: View {
 
     func sendMessage() {
         guard let currentUser = userManager.currentUser else { return }
-        let username = currentUser.displayName ?? "Anonymous" // Now uses the displayName from Firebase Auth
+        let username = currentUser.displayName ?? "Anonymous"
         let filteredMessage = filterMessage(newMessage)
-        
+
         let messageData: [String: Any] = [
             "text": filteredMessage,
             "timestamp": Timestamp(),
             "artPieceID": artPieceID,
             "username": username
         ]
-        
+
         db.collection("chats")
             .document("\(artPieceID)")
             .collection("messages")
@@ -99,16 +90,11 @@ struct ChatView: View {
                 if let error = error {
                     print("Error sending message: \(error.localizedDescription)")
                 } else {
-                    print("Message sent")
                     newMessage = ""
-                    
-                    // Dismiss the keyboard
                     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                 }
             }
     }
-
-
 
     func loadMessages() {
         db.collection("chats")
@@ -120,20 +106,14 @@ struct ChatView: View {
                     print("Error loading messages: \(error.localizedDescription)")
                     return
                 }
-                
                 self.messages = snapshot?.documents.compactMap { document in
-                    do {
-                        return try document.data(as: Message.self)
-                    } catch {
-                        print("Failed to decode message: \(error)")
-                        return nil
-                    }
+                    try? document.data(as: Message.self)
                 } ?? []
             }
     }
 
     func filterMessage(_ message: String) -> String {
-        let bannedWords = ["nigger", "nigga", "fuck", "shit", "bitch", "ho", "whore", "dick", "pussy", "wetback", "hoe", "dumbass", "dumbazz", "faggot", "gay", "ghey", "betch", "spick", "retard", "retarded", "cracker", "cracka"]
+        let bannedWords = ["nigga", "fuck", "shit", "bitch", "dumbass"]
         var filteredMessage = message
         for word in bannedWords {
             filteredMessage = filteredMessage.replacingOccurrences(of: word, with: "****")
@@ -149,14 +129,7 @@ struct ChatView: View {
             .delete { error in
                 if let error = error {
                     print("Error deleting message: \(error.localizedDescription)")
-                } else {
-                    print("Message deleted")
                 }
             }
-    }
-
-    private var isAdmin: Bool {
-        // Replace with actual admin check logic
-        return true // Temporary value; adjust based on your authentication logic
     }
 }

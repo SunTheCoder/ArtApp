@@ -26,8 +26,9 @@ struct ContentView: View {
                     FeaturedArtOnCampusView(selectedArtPiece: $selectedArtPiece)
                     UserAuthenticationView(userManager: userManager)
                 }
-                .navigationTitle("Exhibitions")
+//                .navigationTitle("Exhibitions")
                 .navigationBarHidden(true)
+                .ignoresSafeArea(edges: .top)
             }
         }
     }
@@ -95,7 +96,9 @@ struct CurrentExhibitionsView: View {
                             Text(exhibition.title)
                                 .font(.headline)
                                 .padding(.bottom, 4)
-                                
+                            Text(exhibition.artist.count > 1 ? "Artists:" : "Artist:")
+                                .font(.system(size: 13, weight: .semibold))
+
                             Text(exhibition.artist.joined(separator: ", "))
                                 .font(.subheadline)
                                 .padding(1)
@@ -139,8 +142,11 @@ struct FeaturedArtistView: View {
     let colorScheme: ColorScheme
 
     var body: some View {
-        VStack(alignment: .center, spacing: 16) {
+        VStack(alignment: .leading, spacing: 16) {
             TitleView()
+        }
+        VStack(alignment: .center, spacing: 16) {
+            
             ArtistInfoView(name: sampleArtist.name)
             MainImageView()
             ImageGalleryView(imageUrls: sampleArtist.imageUrls)
@@ -225,13 +231,15 @@ struct FeaturedArtOnCampusView: View {
     @Binding var selectedArtPiece: ArtPiece?
 
     var body: some View {
+        
+        Text("Featured Art on Campus")
+            .font(.system(size: 20, weight: .regular, design: .serif))
+            .italic()
+            .padding(.top, 25)
+            .padding(.bottom, 8)
+            .foregroundColor(.secondary)
+
         VStack(alignment: .center, spacing: 16) {
-            Text("Featured Art on Campus")
-                .font(.system(size: 20, weight: .regular, design: .serif))
-                .italic()
-                .padding(.top, 25)
-                .padding(.bottom, 8)
-                .foregroundColor(.secondary)
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
