@@ -104,6 +104,8 @@ struct CurrentExhibitionsView: View {
     let exhibitions: [Exhibition]
     let colorScheme: ColorScheme
     
+    @State private var slideInIndices: Set<Int> = []
+
     @State private var proxyExhibition: Exhibition? = nil
 
     @State private var selectedExhibition: Exhibition? // Track the selected exhibition
@@ -117,17 +119,14 @@ struct CurrentExhibitionsView: View {
                 .foregroundColor(.secondary)
                 .padding(.bottom, 8)
             
-            ForEach(exhibitions) { exhibition in
+            ForEach(Array(exhibitions.enumerated()), id: \.1.id) { index, exhibition in
                 Button(action: {
                     proxyExhibition = exhibition
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         selectedExhibition = proxyExhibition
                         isExhibitionDetailPresented = true
                     }
-                }){
-                
-                
-
+                }) {
                     HStack(spacing: 16) {
                         AsyncImage(url: URL(string: exhibition.imageUrl)) { image in
                             image
@@ -139,24 +138,24 @@ struct CurrentExhibitionsView: View {
                         } placeholder: {
                             ProgressView()
                         }
-                        
+
                         VStack(alignment: .center, spacing: 4) {
                             Text(exhibition.title)
                                 .font(.headline)
                                 .padding(.bottom, 4)
-                            
+
                             Text(exhibition.artist.joined(separator: ", "))
                                 .font(.subheadline)
                                 .italic()
-                            
+
                             Text("Reception: \(exhibition.reception)")
                                 .font(.caption)
                                 .padding(2)
-                            
+
                             Text("Closing: \(exhibition.closing)")
                                 .font(.caption)
                                 .padding(2)
-                            
+
                             Link("Survey Link", destination: URL(string: exhibition.surveyUrl)!)
                                 .font(.caption)
                                 .padding(2)
@@ -174,8 +173,16 @@ struct CurrentExhibitionsView: View {
                             .fill(colorScheme == .dark ? Color.gray.opacity(0.3) : Color.white)
                             .shadow(radius: 3)
                     )
+                    .offset(x: slideInIndices.contains(index) ? 0 : -UIScreen.main.bounds.width) // Slide-in from left
+                    .animation(.easeOut(duration: 0.8).delay(Double(index) * 0.2), value: slideInIndices)
+                }
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.2) {
+                        slideInIndices.insert(index) // Trigger slide-in for this index
+                    }
                 }
             }
+
         }
         .padding(.horizontal)
         .foregroundColor(.primary)
@@ -216,9 +223,10 @@ struct CurrentExhibitionsView: View {
 struct FeaturedArtistView: View {
     let sampleArtist: Artist
     let colorScheme: ColorScheme
-    
+
     @State private var isArtistDetailPresented = false // State to control modal presentation
-    
+    @State private var slideInOffset: CGFloat = -UIScreen.main.bounds.width // Initial offset for sliding in
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             TitleView()
@@ -236,6 +244,12 @@ struct FeaturedArtistView: View {
                 .shadow(radius: 3)
         )
         .frame(maxWidth: 370)
+        .offset(x: slideInOffset) // Apply offset for sliding effect
+        .onAppear {
+            withAnimation(.easeOut(duration: 1.5)) { // Animate when the view appears
+                slideInOffset = 0 // Move to the final position
+            }
+        }
         // Present the modal view
         .sheet(isPresented: $isArtistDetailPresented) {
             ArtistDetailModalView(artist: sampleArtist, isPresented: $isArtistDetailPresented)
@@ -302,21 +316,19 @@ struct FeaturedArtistView: View {
             Button(action: {
                 isArtistDetailPresented = true
             }) {
-//                Text("Click here to learn more about \(sampleArtist.name.split(separator: " ").first.map(String.init) ?? sampleArtist.name)'s practice.")
                 Text("More Info")
                     .font(.system(size: 16))
                     .foregroundColor(.white)
                     .padding(4)
                     .padding(.horizontal, 2)
-                    
                     .background(Color.primary.opacity(0.2))
-                    
                     .cornerRadius(7)
                     .shadow(radius: 2)
             }
         }
     }
 }
+
 
 // MARK: - Featured Art on Campus View
 struct FeaturedArtOnCampusView: View {
