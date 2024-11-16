@@ -150,14 +150,36 @@ struct CurrentExhibitionsView: View {
                             Text(exhibition.artist.joined(separator: ", "))
                                 .font(.subheadline)
                                 .italic()
+                                .bold()
 
-                            Text("Reception: \(exhibition.reception)")
+                            Text("Reception:")
                                 .font(.caption)
-                                .padding(2)
+                                .padding(.top, 6)
+                                .bold()
+                                .accessibilityLabel(Text("Reception: \(exhibition.reception)"))
+                            Text(formatDate(exhibition.reception))
+                                .font(.caption)
+                                
+                                
+                                .accessibilityLabel(Text("Reception: \(exhibition.reception)"))
+                            Text(formatTime(exhibition.reception))
+                                .font(.caption)
 
-                            Text("Closing: \(exhibition.closing)")
+
+                            Text("Closing:")
                                 .font(.caption)
-                                .padding(2)
+                                
+                                .bold()
+                                .accessibilityLabel(Text("Reception: \(exhibition.closing)"))
+                            Text(formatDate(exhibition.closing))
+                                .font(.caption)
+                                
+                                .accessibilityLabel(Text("Closing: \(exhibition.closing)"))
+                            
+                            Text(formatTime(exhibition.closing))
+                                .font(.caption)
+                                .padding(.bottom, 8)
+                                .accessibilityLabel(Text("Closing: \(exhibition.closing)"))
 
                             Link("Survey Link", destination: URL(string: exhibition.surveyUrl)!)
                                 .font(.caption)
@@ -168,6 +190,7 @@ struct CurrentExhibitionsView: View {
                                 .cornerRadius(3)
                                 .shadow(radius: 2)
                         }
+                        .frame(width: 190)
                     }
                     .padding()
                     .frame(maxWidth: 400)
@@ -199,7 +222,22 @@ struct CurrentExhibitionsView: View {
             }
         }
     }
+    
+    private func formatDate(_ reception: String) -> String {
+        // Split the string by commas
+        let parts = reception.split(separator: ",")
+        
+        // Return the second part if it exists, trimmed of extra spaces
+        return parts.count > 1 ? parts[1].trimmingCharacters(in: .whitespaces) + ", " + parts[2].trimmingCharacters(in: .whitespaces): reception
+    }
 
+    private func formatTime(_ reception: String) -> String {
+        // Split the string by commas
+        let parts = reception.split(separator: ",")
+        
+        // Return the second part if it exists, trimmed of extra spaces
+        return parts.count > 1 ? parts[3].trimmingCharacters(in: .whitespaces) : reception
+    }
     /// Trigger slide-in animation only if the image has loaded
     private func triggerSlideIn(_ index: Int) {
         if loadedIndices.contains(index) {
