@@ -257,7 +257,7 @@ struct FeaturedArtistView: View {
         let name: String
         var body: some View {
             Text(name)
-                .font(.system(size: 16))
+                .font(.system(size: 18))
                 .italic()
                 .padding()
         }
@@ -268,7 +268,7 @@ struct FeaturedArtistView: View {
             Image("LCVAPhoto")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
-                .frame(width: 250, height: 250)
+                .frame(width: 200, height: 200)
                 .clipShape(RoundedRectangle(cornerRadius: 7))
                 .shadow(radius: 3)
         }

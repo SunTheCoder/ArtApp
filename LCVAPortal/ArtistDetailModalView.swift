@@ -17,7 +17,7 @@ struct ArtistDetailModalView: View {
             ScrollView {
                 VStack(alignment: .center, spacing: 20) {
                     Text(artist.name)
-                        .font(.title)
+                        .font(.system(size: 28))
                         .bold()
                         .padding(.top)
                     
@@ -25,22 +25,32 @@ struct ArtistDetailModalView: View {
                         .font(.body)
                         .padding(.bottom)
                     
-                    Text("Artwork")
-                        .font(.headline)
+                    
+                    
+                    Text("Video")
+                        .font(.system(size: 20, weight: .regular, design: .serif))
+                        .italic()
+                        .foregroundColor(.secondary)
                     
                     ForEach(artist.videos.prefix(3), id: \.self) { video in
                         VideoPlayerView(videoName: video)
-                            .frame(width: 300, height: 250)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .scaledToFill()
+                            .frame(maxWidth: 400, maxHeight: 400)
+                            .clipShape(RoundedRectangle(cornerRadius: 7))
                             .padding(.vertical, 10)
                     }
+                    
+                    Text("Mixed Media")
+                        .font(.system(size: 20, weight: .regular, design: .serif))
+                        .italic()
+                        .foregroundColor(.secondary)
                     
                     ForEach(artist.imageUrls, id: \.self) { imageUrl in
                         Image(imageUrl)
                             .resizable()
-                            .scaledToFit()
-                            .frame(width: 400, height: 400)  // Set the size as desired
-                            .clipShape(RoundedRectangle(cornerRadius: 10))  // Optional: Rounded corners
+                            .scaledToFill()
+                            .frame(maxWidth: 400, maxHeight: 400)  // Set the size as desired
+                            .clipShape(RoundedRectangle(cornerRadius: 7))  // Optional: Rounded corners
                             .padding(.vertical, 10)  // Vertical padding to center the images in the ScrollView
                     }
                 }
