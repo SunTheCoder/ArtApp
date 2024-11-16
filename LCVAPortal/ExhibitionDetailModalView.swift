@@ -43,24 +43,38 @@ struct ExhibitionDetailModalView: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                     
                     // Reception, Closing, Description, and Links
-                    Text("Reception:\n\(exhibition.reception)")
+                    Text("Reception:")
                         .font(.body)
-                        .padding(.vertical)
+                        
+                        .bold()
+                        .accessibilityLabel(Text("Reception: \(exhibition.reception)"))
+                    Text(exhibition.reception)
+                        .font(.body)
+                        
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityLabel(Text("Reception: \(exhibition.reception)"))
 
-                    
-                    Text("Closing:\n\(exhibition.closing)")
+                    Text("Closing:")
                         .font(.body)
-                        .padding(.vertical)
+                        
+                        .bold()
+                        .accessibilityLabel(Text("Reception: \(exhibition.closing)"))
+                    Text(exhibition.closing)
+                        .font(.body)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityLabel(Text("Closing: \(exhibition.closing)"))
 
                     
                     
-
+                    Text("About:")
+                        .font(.body)
+                        
+                        .bold()
+                        .accessibilityLabel(Text("About"))
                     
                     Text(exhibition.description)
                         .font(.body)
-                        .padding(.vertical)
+                        
                         .accessibilityLabel(Text("Description: \(exhibition.description)"))
                         .frame(maxWidth: .infinity, alignment: .center)
                     
