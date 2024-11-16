@@ -167,7 +167,7 @@ struct CurrentExhibitionsView: View {
                                 .shadow(radius: 2)
                         }
                     }
-                    .padding()
+                    
                     .frame(maxWidth: 400)
                     .background(
                         RoundedRectangle(cornerRadius: 14)
@@ -399,7 +399,7 @@ struct UserAuthenticationView: View {
                     userManager.logOut()
                 }
                 .font(.system(size: 16))
-                .foregroundColor(.primary)
+                .foregroundColor(.white)
                 .padding(4)
                 .padding(.horizontal, 2)
                 
