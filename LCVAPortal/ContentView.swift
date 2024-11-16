@@ -103,11 +103,10 @@ struct HeaderView: View {
 struct CurrentExhibitionsView: View {
     let exhibitions: [Exhibition]
     let colorScheme: ColorScheme
-    
-    @State private var slideInIndices: Set<Int> = []
 
+    @State private var slideInIndices: Set<Int> = [] // Track indices for sliding in
+    @State private var loadedIndices: Set<Int> = [] // Track indices where images are loaded
     @State private var proxyExhibition: Exhibition? = nil
-
     @State private var selectedExhibition: Exhibition? // Track the selected exhibition
     @State private var isExhibitionDetailPresented = false // State to control modal presentation
 
@@ -118,7 +117,7 @@ struct CurrentExhibitionsView: View {
                 .italic()
                 .foregroundColor(.secondary)
                 .padding(.bottom, 8)
-            
+
             ForEach(Array(exhibitions.enumerated()), id: \.1.id) { index, exhibition in
                 Button(action: {
                     proxyExhibition = exhibition
@@ -135,6 +134,10 @@ struct CurrentExhibitionsView: View {
                                 .frame(width: 120, height: 120)
                                 .clipShape(RoundedRectangle(cornerRadius: 7))
                                 .shadow(radius: 3)
+                                .onAppear {
+                                    loadedIndices.insert(index) // Mark this image as loaded
+                                    triggerSlideIn(index) // Start slide-in if image is loaded
+                                }
                         } placeholder: {
                             ProgressView()
                         }
@@ -176,13 +179,7 @@ struct CurrentExhibitionsView: View {
                     .offset(x: slideInIndices.contains(index) ? 0 : -UIScreen.main.bounds.width) // Slide-in from left
                     .animation(.easeOut(duration: 0.8).delay(Double(index) * 0.2), value: slideInIndices)
                 }
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.2) {
-                        slideInIndices.insert(index) // Trigger slide-in for this index
-                    }
-                }
             }
-
         }
         .padding(.horizontal)
         .foregroundColor(.primary)
@@ -201,19 +198,19 @@ struct CurrentExhibitionsView: View {
                 ))
             }
         }
-
-
-
     }
-    // MARK: - Helper Function
-      private func showModalWithExhibition(_ exhibition: Exhibition) {
-          selectedExhibition = nil // Clear previous selection to trigger state change
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-              selectedExhibition = exhibition
-              isExhibitionDetailPresented = true
-          }
-      }
-  }
+
+    /// Trigger slide-in animation only if the image has loaded
+    private func triggerSlideIn(_ index: Int) {
+        if loadedIndices.contains(index) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.2) {
+                slideInIndices.insert(index)
+            }
+        }
+    }
+}
+
+    
 
 
 
@@ -246,7 +243,7 @@ struct FeaturedArtistView: View {
         .frame(maxWidth: 370)
         .offset(x: slideInOffset) // Apply offset for sliding effect
         .onAppear {
-            withAnimation(.easeOut(duration: 1.5)) { // Animate when the view appears
+            withAnimation(.easeOut(duration: 1.3).delay(1)) { // Animate when the view appears
                 slideInOffset = 0 // Move to the final position
             }
         }
