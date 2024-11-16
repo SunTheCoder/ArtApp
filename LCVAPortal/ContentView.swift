@@ -167,7 +167,7 @@ struct CurrentExhibitionsView: View {
                                 .shadow(radius: 2)
                         }
                     }
-                    
+                    .padding()
                     .frame(maxWidth: 400)
                     .background(
                         RoundedRectangle(cornerRadius: 14)
