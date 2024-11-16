@@ -25,7 +25,7 @@ struct ContentView: View {
 //                    HeaderView(isAnimating: $isAnimating)
                     CurrentExhibitionsView(exhibitions: exhibitions, colorScheme: colorScheme)
                     FeaturedArtistView(sampleArtist: sampleArtist, colorScheme: colorScheme)
-                    FeaturedArtOnCampusView(selectedArtPiece: $selectedArtPiece)
+                    FeaturedArtOnCampusView(colorScheme: colorScheme, selectedArtPiece: $selectedArtPiece)
                     UserAuthenticationView(userManager: userManager)
                 }
                 .navigationBarTitleDisplayMode(.inline) // Keeps the title inline
@@ -134,7 +134,7 @@ struct CurrentExhibitionsView: View {
                                 .resizable()
                                 .scaledToFill()
                                 .frame(width: 120, height: 120)
-                                .clipShape(RoundedRectangle(cornerRadius: 4))
+                                .clipShape(RoundedRectangle(cornerRadius: 7))
                                 .shadow(radius: 3)
                         } placeholder: {
                             ProgressView()
@@ -168,8 +168,9 @@ struct CurrentExhibitionsView: View {
                         }
                     }
                     .padding()
+                    .frame(maxWidth: 400)
                     .background(
-                        RoundedRectangle(cornerRadius: 4)
+                        RoundedRectangle(cornerRadius: 14)
                             .fill(colorScheme == .dark ? Color.gray.opacity(0.3) : Color.white)
                             .shadow(radius: 3)
                     )
@@ -228,13 +229,13 @@ struct FeaturedArtistView: View {
             ImageGalleryView(imageUrls: sampleArtist.imageUrls)
             LearnMoreButton(sampleArtist: sampleArtist, isArtistDetailPresented: $isArtistDetailPresented)
         }
-        .padding(.horizontal)
+        .padding()
         .background(
-            RoundedRectangle(cornerRadius: 4)
+            RoundedRectangle(cornerRadius: 14)
                 .fill(colorScheme == .dark ? Color.gray.opacity(0.3) : Color.white)
                 .shadow(radius: 3)
         )
-        .frame(maxWidth: 360)
+        .frame(maxWidth: 370)
         // Present the modal view
         .sheet(isPresented: $isArtistDetailPresented) {
             ArtistDetailModalView(artist: sampleArtist, isPresented: $isArtistDetailPresented)
@@ -268,7 +269,7 @@ struct FeaturedArtistView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 250, height: 250)
-                .clipShape(RoundedRectangle(cornerRadius: 4))
+                .clipShape(RoundedRectangle(cornerRadius: 7))
                 .shadow(radius: 3)
         }
     }
@@ -283,8 +284,9 @@ struct FeaturedArtistView: View {
                             .resizable()
                             .scaledToFill()
                             .frame(width: 120, height: 120)
-                            .clipShape(RoundedRectangle(cornerRadius: 4))
+                            .clipShape(RoundedRectangle(cornerRadius: 7))
                             .padding(.vertical, 5)
+                            .shadow(radius: 3)
                     }
                 }
                 .padding(.horizontal)
@@ -300,10 +302,17 @@ struct FeaturedArtistView: View {
             Button(action: {
                 isArtistDetailPresented = true
             }) {
-                Text("Click here to learn more about \(sampleArtist.name.split(separator: " ").first.map(String.init) ?? sampleArtist.name)'s practice.")
-                    .font(.system(size: 14))
-                    .foregroundColor(.blue)
-                    .padding(.vertical)
+//                Text("Click here to learn more about \(sampleArtist.name.split(separator: " ").first.map(String.init) ?? sampleArtist.name)'s practice.")
+                Text("More Info")
+                    .font(.system(size: 16))
+                    .foregroundColor(.white)
+                    .padding(4)
+                    .padding(.horizontal, 2)
+                    
+                    .background(Color.primary.opacity(0.2))
+                    
+                    .cornerRadius(7)
+                    .shadow(radius: 2)
             }
         }
     }
@@ -311,6 +320,7 @@ struct FeaturedArtistView: View {
 
 // MARK: - Featured Art on Campus View
 struct FeaturedArtOnCampusView: View {
+    let colorScheme: ColorScheme
     @Binding var selectedArtPiece: ArtPiece?
 
     var body: some View {
@@ -332,7 +342,8 @@ struct FeaturedArtOnCampusView: View {
                                 image
                                     .resizable()
                                     .frame(width: 150, height: 150)
-                                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                                    .clipShape(RoundedRectangle(cornerRadius: 7))
+                                    .shadow(radius: 3)
                                     .onTapGesture {
                                         selectedArtPiece = artPiece
                                     }
@@ -357,11 +368,11 @@ struct FeaturedArtOnCampusView: View {
                 .padding(.horizontal)
             }
             .background(
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(Color.white)
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(colorScheme == .dark ? Color.gray.opacity(0.3) : Color.white)
                     .shadow(radius: 3)
             )
-            .frame(maxWidth: 360)
+            .frame(maxWidth: 370)
             .sheet(item: $selectedArtPiece) { artPiece in
                 NavigationView {
                     MapModalView(artPiece: artPiece, userManager: UserManager())
@@ -387,48 +398,60 @@ struct UserAuthenticationView: View {
                 Button("Log Out") {
                     userManager.logOut()
                 }
-                .padding(2)
+                .font(.system(size: 16))
+                .foregroundColor(.primary)
+                .padding(4)
                 .padding(.horizontal, 2)
+                
                 .background(Color.primary.opacity(0.2))
-                .foregroundColor(.white)
-                .cornerRadius(3)
+                
+                .cornerRadius(7)
                 .shadow(radius: 2)
             } else {
                 TextField("Email", text: $email)
                     .autocapitalization(.none)
                     .padding()
                     .background(Color.gray.opacity(0.1))
-                    .cornerRadius(3)
+                    .cornerRadius(14)
+                    .shadow(radius: 5)
 
                 SecureField("Password", text: $password)
                     .padding()
                     .background(Color.gray.opacity(0.1))
-                    .cornerRadius(3)
+                    .cornerRadius(14)
+                    .shadow(radius: 5)
 
                 TextField("Name", text: $name)
                     .padding()
                     .background(Color.gray.opacity(0.1))
-                    .cornerRadius(3)
+                    .cornerRadius(14)
+                    .shadow(radius: 5)
 
                 HStack {
                     Button("Log In") {
                         userManager.logIn(email: email, password: password)
                     }
-                    .padding(2)
-                    .padding(.horizontal, 2)
-                    .background(Color.primary.opacity(0.2))
+                    .font(.system(size: 16))
                     .foregroundColor(.white)
-                    .cornerRadius(3)
+                    .padding(4)
+                    .padding(.horizontal, 2)
+                    
+                    .background(Color.primary.opacity(0.2))
+                    
+                    .cornerRadius(7)
                     .shadow(radius: 2)
 
                     Button("Sign Up") {
                         userManager.signUp(email: email, password: password, name: name, preferences: preferences)
                     }
-                    .padding(2)
-                    .padding(.horizontal, 2)
-                    .background(Color.primary.opacity(0.2))
+                    .font(.system(size: 16))
                     .foregroundColor(.white)
-                    .cornerRadius(3)
+                    .padding(4)
+                    .padding(.horizontal, 2)
+                    
+                    .background(Color.primary.opacity(0.2))
+                    
+                    .cornerRadius(7)
                     .shadow(radius: 2)
                 }
             }

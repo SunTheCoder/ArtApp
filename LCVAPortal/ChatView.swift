@@ -49,12 +49,14 @@ struct ChatView: View {
                         }
                     }) {
                         Text("Send")
-                            .bold()
-                            .padding(2)
-                            .padding(.horizontal, 2)
-                            .background(Color.primary.opacity(0.2))
+                            .font(.system(size: 16))
                             .foregroundColor(.white)
-                            .cornerRadius(3)
+                            .padding(4)
+                            .padding(.horizontal, 2)
+                            
+                            .background(Color.primary.opacity(0.2))
+                            
+                            .cornerRadius(7)
                             .shadow(radius: 2)
                     }
                     .disabled(newMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
