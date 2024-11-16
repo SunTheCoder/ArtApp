@@ -240,7 +240,7 @@ struct FeaturedArtistView: View {
                 .fill(colorScheme == .dark ? Color.gray.opacity(0.3) : Color.white)
                 .shadow(radius: 3)
         )
-        .frame(maxWidth: 370)
+        .frame(maxWidth: 400)
         .offset(x: slideInOffset) // Apply offset for sliding effect
         .onAppear {
             withAnimation(.easeOut(duration: 1.3).delay(1)) { // Animate when the view appears
@@ -338,7 +338,7 @@ struct FeaturedArtOnCampusView: View {
             .font(.system(size: 20, weight: .regular, design: .serif))
             .italic()
             .padding(.top, 25)
-            .padding(.bottom, 8)
+            .padding(.bottom, 18)
             .foregroundColor(.secondary)
 
         VStack(alignment: .center, spacing: 16) {
@@ -381,7 +381,7 @@ struct FeaturedArtOnCampusView: View {
                     .fill(colorScheme == .dark ? Color.gray.opacity(0.3) : Color.white)
                     .shadow(radius: 3)
             )
-            .frame(maxWidth: 370)
+            .frame(maxWidth: 400)
             .sheet(item: $selectedArtPiece) { artPiece in
                 NavigationView {
                     MapModalView(artPiece: artPiece, userManager: UserManager())
@@ -466,7 +466,7 @@ struct UserAuthenticationView: View {
             }
         }
         .padding()
-        .frame(maxWidth: 400)
+        .frame(maxWidth: 420)
     }
 }
 
