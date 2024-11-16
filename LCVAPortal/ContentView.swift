@@ -49,7 +49,7 @@ struct ContentView: View {
                         }
                         .frame(maxWidth: .infinity) // Ensures full width
                         .padding(.vertical, -30) // Adds vertical padding to increase space
-                        .offset(y: -20)
+                        .offset(y: -30)
                         .multilineTextAlignment(.center)
                         .foregroundColor(Color.primary)
                         .onAppear {
